@@ -1,0 +1,9 @@
+{
+	"name": "lang",
+	"authors": [
+		"Hüseyin"
+	],
+	"description": "A minimal D application.",
+	"copyright": "Copyright © 2018, Hüseyin",
+	"license": "proprietary"
+}
