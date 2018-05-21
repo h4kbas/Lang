@@ -5,5 +5,5 @@ void main()
 {
 	Parser p = Parser("test.n");
   p.parse();
-  //writeln(p.sets);
+  //writeln(p.lexer.tokens);
 }

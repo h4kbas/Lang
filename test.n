@@ -10,12 +10,18 @@ define "+" as a:Ident _ b:Ident {
 
 }
 
-define "topla" as a:Ident b:Ident _ c:Ident {
+
+define "topla" as a:Ident ile b:Ident _ {
 
 }
 
 
+define "topla" as a:Ident b:Ident _ c:Ident {
+
+}
+
 ++a
 a++
 a + b
+a ile b topla
 a b topla c

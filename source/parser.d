@@ -5,6 +5,7 @@ import std.uni;
 import std.file: readText;
 import std.conv: to;
 import std.algorithm: countUntil;
+import std.math: abs;
 import lexer;
 
 struct ParseSet{
@@ -44,14 +45,14 @@ struct Parser{
       return Token(Type.EOF);
   }
 
-  Token lookNext(int step = 1){
+  Token lookNext(ulong step = 1){
     if(mark + step < lexer.tokens.length)
       return lexer.tokens[mark + step];
     else
       return Token(Type.EOF);
   }
 
-  Token lookPrev(int step = 1){
+  Token lookPrev(ulong step = 1){
     if(mark - step > 0)
       return lexer.tokens[mark - step];
     else
@@ -86,76 +87,47 @@ struct Parser{
     for(uint i = 0; i < poss_set.length; i++){
       bool suit = false;
       uint place_of_target;
-      //Left to right
-      if(poss_set[i].items[0].text == target.text){
-       for(uint j = 1; j < poss_set[i].items.length; j++){
-          const Token item = poss_set[i].items[j];
-          if(item.type != this.lookNext(j).type){
-            suit = false;
-            break;
-          }
-          else
-            suit = true;
-        }   
-      }
-      //Right to left
-      else if(poss_set[i].items[$ - 1].text == target.text){
-       for(uint j = 1; j < poss_set[i].items.length; j++){
-          const Token item = poss_set[i].items[$ - j];
-          if(item.type != this.lookPrev(j).type){
-            suit = false;
-            break;
-          }
-          else
-            suit = true;
-        }   
-      }
-      //Right to left
-      else{
-        uint targetpos = to!uint(countUntil!"a.text == b.text"(poss_set[i].items, target));
-        //Next
-        for(uint j = targetpos; j < poss_set[i].items.length; j++){
-          const Token item = poss_set[i].items[j];
-          if(item.text){
-            if(item.text != this.lookNext(j - targetpos).text){
-              writeln(item, this.lookNext(j - targetpos));
-              suit = false;
-              break;
-            }
-            else
-              suit = true;
-          }
-          else if(item.type != this.lookNext(j - targetpos).type){
-            writeln(item, this.lookNext(j - targetpos));
+      uint targetpos = to!uint(countUntil!"a.text == b.text"(poss_set[i].items, target));
+      //Next
+      for(int j = targetpos + 1; j < poss_set[i].items.length; j++){
+        Token item = poss_set[i].items[j];
+        if(item.text != ""){
+          if(item.text != this.lookNext(j - targetpos).text){
             suit = false;
             break;
           }
           else
             suit = true;
         }
-        //Prev
-        for(uint j = targetpos; j < poss_set[i].items.length; j++){
-          const Token item = poss_set[i].items[j];
-          if(item.text){
-            if(item.text != this.lookPrev(j - targetpos).text){
-              writeln(item, this.lookPrev(j - targetpos));
-              suit = false;
-              break;
-            }
-            else
-              suit = true;
-          }
-          else if(item.type != this.lookPrev(j - targetpos).type){
-            writeln(item, this.lookPrev(j - targetpos));
+        else {
+          if(item.type != this.lookNext(j - targetpos).type){
             suit = false;
             break;
           }
           else
             suit = true;
         }
-        
       }
-
+      //Prev
+      for(int j = targetpos - 1; j > -1; j--){
+        Token item = poss_set[i].items[j];
+        if(item.text != ""){
+          if(item.text != this.lookPrev(targetpos - j).text){
+            suit = false;
+            break;
+          }
+          else
+            suit = true;
+        }
+        else {
+          if(item.type != this.lookPrev(targetpos - j).type){
+            suit = false;
+            break;
+          }
+          else
+            suit = true;
+        }
+      }
       if(suit){
         set = poss_set[i];
         break;
@@ -185,6 +157,7 @@ struct Parser{
         else{
           Token t;
           t.type = Type.Ident;
+          t.text = this.current().text;
           set.items ~= t;
         }
       }
@@ -196,6 +169,6 @@ struct Parser{
 
   void Custom(){
     ParseSet set = this.findParseSet();
-    writeln(set);
+    writeln("Found: ",set);
   }
 }

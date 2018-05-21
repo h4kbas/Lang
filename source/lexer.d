@@ -3,7 +3,7 @@ module lexer;
 import std.stdio;
 import std.uni;
 
-enum Type { None = -1, EOF = 0, SOF = 0, Ident, Str, Int, Sym};
+enum Type { None = -2, EOL = -1, EOF = 0, SOF = 0, Ident, Str, Int, Sym};
 
 struct Token {
   char [] text;
@@ -36,6 +36,10 @@ struct Lexer {
        tokens ~= Ident();
       else if( isPunctuation(x[mark]))
         tokens ~= Sym();
+      else if(x[mark] == '\n'){
+        tokens ~= Token(Type.EOL);
+        mark++;
+      }
       else
         mark++;
     }
