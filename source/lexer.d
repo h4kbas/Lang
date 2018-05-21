@@ -3,17 +3,28 @@ module lexer;
 import std.stdio;
 import std.uni;
 
-enum Type { None = 0, Ident, Str, Int, Sym};
+enum Type { None = -1, EOF = 0, SOF = 0, Ident, Str, Int, Sym};
 
 struct Token {
   char [] text;
   Type type;
+  this(Type t){
+    this.type = t;  
+  }
+  this(char[] str, Type t){
+    this.text = str;
+    this.type = t;  
+  }
+  bool opEquals()(auto ref Token other) {
+    return (this.text == other.text && this.type == other.type);
+  }
 }
 
 struct Lexer {
   char [] x;
   uint mark = 0;
   Token[] tokens;
+
   void lex(string x){
     this.x ~= x;
     while(mark < x.length){

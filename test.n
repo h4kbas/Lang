@@ -1,0 +1,21 @@
+define "++" as _ a:Ident {
+
+}
+
+define "++" as a:Ident _ {
+
+}
+
+define "+" as a:Ident _ b:Ident {
+
+}
+
+define "topla" as a:Ident b:Ident _ c:Ident {
+
+}
+
+
+++a
+a++
+a + b
+a b topla c

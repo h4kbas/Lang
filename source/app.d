@@ -1,10 +1,9 @@
 import std.stdio;
-import std.file;
 
-import lexer;
+import parser;
 void main()
 {
-	Lexer lexer = Lexer();
-	lexer.lex(readText("test.n"));
-	writeln(lexer.tokens);
+	Parser p = Parser("test.n");
+  p.parse();
+  //writeln(p.sets);
 }
