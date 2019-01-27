@@ -2,21 +2,35 @@ module lexer;
 
 import std.stdio;
 import std.uni;
+import std.conv:to;
+import std.algorithm: canFind;
 
 enum Type { None = -2, EOL = -1, EOF = 0, SOF = 0, Ident, Str, Int, Sym};
 
-struct Token {
-  char [] text;
+class Token {
+  char[] text;
   Type type;
   this(Type t){
     this.type = t;  
   }
-  this(char[] str, Type t){
+  this(char[] str = [], Type t = Type.None){
     this.text = str;
     this.type = t;  
   }
   bool opEquals()(auto ref Token other) {
     return (this.text == other.text && this.type == other.type);
+  }
+
+  bool opEquals()(auto ref string other) {
+    return this.text == other;
+  }
+
+   bool opEquals()(auto ref Type other) {
+    return this.type == other;
+  }
+
+  override string toString(){
+    return this.text.to!string;
   }
 }
 
@@ -37,7 +51,7 @@ struct Lexer {
       else if( isPunctuation(x[mark]))
         tokens ~= Sym();
       else if(x[mark] == '\n'){
-        tokens ~= Token(Type.EOL);
+        //tokens ~= Token(Type.EOL);
         mark++;
       }
       else
@@ -46,7 +60,7 @@ struct Lexer {
   }
 
   Token Int(){
-    Token t;
+    Token t = new Token();
     t.type = Type.Int;
     while(mark < x.length && isNumber(x[mark])){
       t.text ~= x[mark];
@@ -56,7 +70,7 @@ struct Lexer {
   }
 
    Token Str(){
-    Token t;
+    Token t = new Token();
     t.type = Type.Str;
     mark++;
     while(mark < x.length && x[mark] != '"'){
@@ -68,7 +82,7 @@ struct Lexer {
   }
 
   Token Ident(){
-    Token t;
+    Token t = new Token();
     t.type = Type.Ident;
     while(mark < x.length && isAlphaNum(x[mark])){
       t.text ~= x[mark];
@@ -78,11 +92,12 @@ struct Lexer {
   }
 
   Token Sym(){
-    Token t;
+    Token t = new Token();
     t.type = Type.Sym;
     while(mark < x.length && isPunctuation(x[mark])){
       t.text ~= x[mark];
       mark++;
+      if(!["+", "-", "/", "*", "="].canFind(t.text)) break;
     }
     return t;
   }

@@ -1,27 +1,15 @@
-define "++" as _ a:Ident {
+log "deneme"
 
+Person{
+  string Name
+  string Surname
+  string Password
+  int Age
+}
+Woman:Person{
+  Person Husband
 }
 
-define "++" as a:Ident _ {
+CheckedInt:int{
 
 }
-
-define "+" as a:Ident _ b:Ident {
-
-}
-
-
-define "topla" as a:Ident ile b:Ident _ {
-
-}
-
-
-define "topla" as a:Ident b:Ident _ c:Ident {
-
-}
-
-++a
-a++
-a + b
-a ile b topla
-a b topla c

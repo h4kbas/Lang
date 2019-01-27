@@ -1,9 +1,13 @@
 import std.stdio;
-
+import std.algorithm.iteration;
 import parser;
+import std.conv:to;
 void main()
 {
-	Parser p = Parser("test.n");
+	Parser p = new Parser("test.n");
   p.parse();
-  //writeln(p.lexer.tokens);
+  foreach(k,v; p.models){
+    writeln(v.name, " ", v.parent);
+    writeln(v.elements);
+  }
 }
