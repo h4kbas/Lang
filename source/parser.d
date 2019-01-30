@@ -27,7 +27,7 @@ class Parser{
 
   void parse(){
     while(this.next.type != Type.EOF){
-      if(this.current==Keywords.Log||this.current==Keywords.SComment||this.current==Keywords.L_MComment)
+      if(this.currentIf(Keywords.Log)||this.currentIf(Keywords.SComment)||this.currentIf(Keywords.L_MComment))
         GExpression();
       else
         Definition();
@@ -91,7 +91,7 @@ class Parser{
   void Definition(){
     
     //Extend
-    if(this.current == Keywords.Modify){
+    if(this.currentIf(Keywords.Modify)){
       if(this.next.toString() !in models)
         throw new Error(Errors.CantModifyUndefinedModel);
       Model m = models[this.current.toString()];
@@ -116,11 +116,11 @@ class Parser{
     else{
       if(this.current.toString() in models)
         throw new Error(Errors.ModelAlreadyDeclared~this.current.toString());
-      if(this.current.toString() == "delete")
+      if(this.currentIf("delete"))
           throw new Error(Errors.DeleteReserved);
       Model m = new Model(this.current.toString());
       //Inheritance
-      if(this.next == Keywords.Colon){
+      if(this.nextIf(Keywords.Colon)){
         if(this.next.toString() in models){
           m.parent = models[this.current.toString()];
           this.next();
@@ -134,22 +134,22 @@ class Parser{
   }
 
   void GExpression(){
-    if(this.current == Keywords.Log)
+    if(this.currentIf(Keywords.Log))
       Log();
-    else if(this.current == Keywords.SComment)
+    else if(this.currentIf(Keywords.SComment))
       Comment();
-    else if(this.current == Keywords.L_MComment)
+    else if(this.currentIf(Keywords.L_MComment))
       MComment();
   }
 
   ModelElement[string] ModelElements(bool modify = false){
     ModelElement[string] melements;
-      if(this.current == Keywords.L_Brace){
-        while(this.next != Keywords.R_Brace){
+      if(this.currentIf(Keywords.L_Brace)){
+        while(!this.nextIf(Keywords.R_Brace)){
           ModelElement e = ModelElement();
           if(this.current.toString() !in models) {
             if(modify){
-              if(this.current.toString() == Keywords.Delete)
+              if(this.currentIf(Keywords.Delete))
                 e.type = null;
             }
             else
@@ -160,7 +160,7 @@ class Parser{
           }
           e.name = this.next;
           melements[e.name.toString()] = e;
-          if(this.current == Type.EOF)
+          if(this.currentIf(Type.EOF))
             throw new Error(Errors.RightBraceExpected);
         }
         return melements;
@@ -170,7 +170,7 @@ class Parser{
   }
 
   void Log(){
-      if(this.next == Type.Str)
+      if(this.nextIf(Type.Str))
         writeln(this.current);
       else{
         if(this.current.toString() in models){
@@ -180,12 +180,12 @@ class Parser{
   }
 
   void Comment(){
-    while(this.current != Type.EOL){
+    while(!this.currentIf(Type.EOL)){
       this.next(true);
     }
   }
   void MComment(){
-    while(this.current != Keywords.R_MComment){
+    while(!this.currentIf(Keywords.R_MComment)){
       this.next();
     }
   }
