@@ -1,15 +1,23 @@
-log "deneme"
-
 Person{
   string Name
   string Surname
   string Password
   int Age
-}
-Woman:Person{
-  Person Husband
+  bool Gender
 }
 
-CheckedInt:int{
+log Person
 
+//Tek satır deneme
+
+modify Person{
+  delete Age
+  string Occupation
 }
+
+/*Çok satır
+deneme
+yapıyorum
+*/
+
+log Person

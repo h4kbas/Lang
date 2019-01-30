@@ -7,6 +7,10 @@ import std.algorithm: canFind;
 
 enum Type { None = -2, EOL = -1, EOF = 0, SOF = 0, Ident, Str, Int, Sym};
 
+enum Keywords {
+  Log = "log", SComment = "//", L_MComment = "/*", R_MComment = "*/", Modify = "modify",
+  L_Brace = "{", R_Brace = "}", Colon = ":", Delete = "delete" 
+}
 class Token {
   char[] text;
   Type type;
@@ -51,7 +55,7 @@ struct Lexer {
       else if( isPunctuation(x[mark]))
         tokens ~= Sym();
       else if(x[mark] == '\n'){
-        //tokens ~= Token(Type.EOL);
+        tokens ~= new Token(Type.EOL);
         mark++;
       }
       else
