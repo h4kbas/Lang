@@ -27,7 +27,7 @@ class Parser{
 
   void parse(){
     while(this.next.type != Type.EOF){
-      Definition();
+      GExpression();
     }
   }
 
@@ -86,21 +86,16 @@ class Parser{
   }
 
   void Definition(){
-    if(this.current == Keywords.Log)
-      Log();
-    else if(this.current == Keywords.SComment)
-      Comment();
-    else if(this.current == Keywords.L_MComment)
-      MComment();
+    
     //Extend
-    else if(this.current == Keywords.Modify){
+    if(this.current == Keywords.Modify){
       if(this.next.toString() !in models)
         throw new Error(Errors.CantModifyUndefinedModel);
       Model m = models[this.current.toString()];
       this.next();
       auto elements = ModelElements(true);
       foreach(name, e; elements){
-        if(!e.marked){
+        if(e.type !is null){
           if(name !in m.elements){
             m.elements[name] = e;
           }
@@ -135,6 +130,17 @@ class Parser{
     }
   }
 
+  void GExpression(){
+    if(this.current == Keywords.Log)
+      Log();
+    else if(this.current == Keywords.SComment)
+      Comment();
+    else if(this.current == Keywords.L_MComment)
+      MComment();
+    else
+      Definition();
+  }
+
   ModelElement[string] ModelElements(bool modify = false){
     ModelElement[string] melements;
       if(this.current == Keywords.L_Brace){
@@ -143,8 +149,7 @@ class Parser{
           if(this.current.toString() !in models) {
             if(modify){
               if(this.current.toString() == Keywords.Delete)
-                e.type = new Model();
-                e.marked = true;
+                e.type = null;
             }
             else
               throw new Error(Errors.TypeNotDefined~this.current.toString());
@@ -215,5 +220,4 @@ class Model {
 struct ModelElement{
   Token name;
   Model type;
-  bool marked = false;
 }
