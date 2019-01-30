@@ -27,7 +27,7 @@ class Parser{
 
   void parse(){
     while(this.next.type != Type.EOF){
-      if(this.current == Keywords.Log || this.current == Keywords.SComment ||  this.current == Keywords.L_MComment)
+      if(this.current==Keywords.Log||this.current==Keywords.SComment||this.current==Keywords.L_MComment)
         GExpression();
       else
         Definition();
