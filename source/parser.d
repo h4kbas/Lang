@@ -27,7 +27,10 @@ class Parser{
 
   void parse(){
     while(this.next.type != Type.EOF){
-      GExpression();
+      if(this.current == Keywords.Log || this.current == Keywords.SComment ||  this.current == Keywords.L_MComment)
+        GExpression();
+      else
+        Definition();
     }
   }
 
@@ -137,8 +140,6 @@ class Parser{
       Comment();
     else if(this.current == Keywords.L_MComment)
       MComment();
-    else
-      Definition();
   }
 
   ModelElement[string] ModelElements(bool modify = false){
