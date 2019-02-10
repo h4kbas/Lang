@@ -176,7 +176,6 @@ class Parser{
   }
 
   void Expression(){
-    this.current.writeln;
     if(this.currentIf(Keywords.If))
       If();
   }
@@ -263,7 +262,6 @@ class Parser{
       Expression();
     }
     while(!this.nextIf(Keywords.R_Brace) && this.scopedepth != depth + 1);
-    writeln(this.current, this.scopedepth);
     if(!this.currentIf(Keywords.R_Brace)) 
       throw new Exception(Errors.RightBraceExpected);
     this.scopedepth--;
