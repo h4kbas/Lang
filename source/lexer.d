@@ -9,7 +9,7 @@ enum Type { None = -2, EOL = -1, EOF = 0, SOF = 0, Ident, Str, Int, Sym};
 
 enum Keywords {
   Log = "log", SComment = "//", L_MComment = "/*", R_MComment = "*/", Modify = "modify",
-  L_Brace = "{", R_Brace = "}", Colon = ":", Delete = "delete" 
+  L_Brace = "{", R_Brace = "}", L_Paren = "(", R_Paren = ")", Colon = ":", Delete = "delete", If = "if" 
 }
 class Token {
   char[] text;

@@ -6,8 +6,6 @@ Person{
   bool Gender
 }
 
-log Person
-
 //Tek satır deneme
 
 modify Person{
@@ -20,4 +18,15 @@ deneme
 yapıyorum
 */
 
-log Person
+
+int deneme(int a){
+  if(){
+    if(){
+      if(){
+        
+      }
+    }
+  }
+}
+
+log deneme

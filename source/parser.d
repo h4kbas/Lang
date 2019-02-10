@@ -8,12 +8,15 @@ import std.algorithm: countUntil;
 import std.math: abs;
 import errors;
 import lexer;
+import model;
+
 
 class Parser{
-
   int mark = -1;
   Lexer lexer;
   Model[string] models;
+  Func[string] functions;
+  uint scopedepth = 0;
 
   this(string file){
     models = [
@@ -27,10 +30,10 @@ class Parser{
 
   void parse(){
     while(this.next.type != Type.EOF){
-      if(this.currentIf(Keywords.Log)||this.currentIf(Keywords.SComment)||this.currentIf(Keywords.L_MComment))
-        GExpression();
+      if(this.scopedepth > 0)
+        Expression();
       else
-        Definition();
+        GExpression();
     }
   }
 
@@ -46,8 +49,9 @@ class Parser{
       else{
         if(t.type == Type.EOL)
           return this.next;
-        else
+        else{
           return t;
+        }
       }
     }
     else
@@ -84,8 +88,32 @@ class Parser{
     return t == this.current;
   }
 
+  bool currentIf(Type t){
+    return t == this.current.type;
+  }
+
   bool currentIf(string t){
     return t == this.current.text;
+  }
+
+  Model getModel(Token s, bool bypass = true){
+    if(s.toString() in models){
+      return models[s.toString()];
+    }
+    if(bypass)
+      throw new Exception(Errors.ModelNotDefined~s.toString());
+    else
+      return null;
+  }
+
+  Func getFunc(Token s, bool bypass = true){
+    if(s.toString() in functions){
+      return functions[s.toString()];
+    }
+    if(bypass)
+      throw new Exception(Errors.FuncNotDefined~s.toString());
+    else
+      return null;
   }
 
   void Definition(){
@@ -116,7 +144,7 @@ class Parser{
     else{
       if(this.current.toString() in models)
         throw new Error(Errors.ModelAlreadyDeclared~this.current.toString());
-      if(this.currentIf("delete"))
+      if(this.currentIf(Keywords.Delete))
           throw new Error(Errors.DeleteReserved);
       Model m = new Model(this.current.toString());
       //Inheritance
@@ -140,6 +168,17 @@ class Parser{
       Comment();
     else if(this.currentIf(Keywords.L_MComment))
       MComment();
+    else if(this.current.toString() in models){
+      Function();
+    }
+    else
+      Definition();
+  }
+
+  void Expression(){
+    this.current.writeln;
+    if(this.currentIf(Keywords.If))
+      If();
   }
 
   ModelElement[string] ModelElements(bool modify = false){
@@ -156,7 +195,7 @@ class Parser{
               throw new Error(Errors.TypeNotDefined~this.current.toString());
           }
           else{
-              e.type = models[this.current.toString()];
+              e.type = this.getModel(this.current);
           }
           e.name = this.next;
           melements[e.name.toString()] = e;
@@ -172,10 +211,11 @@ class Parser{
   void Log(){
       if(this.nextIf(Type.Str))
         writeln(this.current);
-      else{
-        if(this.current.toString() in models){
-          writeln(models[this.current.toString()].serialize());
-        }
+      else if(this.getModel(this.current, false)){
+        writeln(this.getModel(this.current).serialize());
+      }
+      else if(this.getFunc(this.current, false)){
+        writeln(this.getFunc(this.current).serialize());
       }
   }
 
@@ -184,41 +224,89 @@ class Parser{
       this.next(true);
     }
   }
+
   void MComment(){
     while(!this.currentIf(Keywords.R_MComment)){
       this.next();
     }
   }
+
+  void Function(){
+    Func f = new Func(this.getModel(this.current()), this.next(), this.scopedepth);
+    if(!this.nextIf(Keywords.L_Paren))
+      throw new Exception(Errors.LeftParenExcpected);
+    while(!this.nextIf(Keywords.R_Paren)){
+      Param p = new Param(this.getModel(this.current()), this.next());
+      f.params ~= p;
+    }
+    functions[f.name.toString()] = f;
+    Scope(f.scopedepth);
+  }
+
+  void If(){
+    if(!this.nextIf(Keywords.L_Paren))
+      throw new Exception(Errors.LeftParenExcpected);
+
+    while(!this.nextIf(Keywords.R_Paren)){
+    }
+    Scope(this.scopedepth);
+  }
+
+  void Scope(uint depth){
+    if(!this.nextIf(Keywords.L_Brace)) 
+      throw new Exception(Errors.LeftBraceExpected);
+    this.next();
+    this.scopedepth++;        
+    do{
+      if(this.currentIf(Keywords.R_Brace))
+        break;
+      Expression();
+    }
+    while(!this.nextIf(Keywords.R_Brace) && this.scopedepth != depth + 1);
+    writeln(this.current, this.scopedepth);
+    if(!this.currentIf(Keywords.R_Brace)) 
+      throw new Exception(Errors.RightBraceExpected);
+    this.scopedepth--;
+  }
+  
 }
 
-class Model {
+class Func{
   Token name;
-  ModelElement[string] elements;
-  Model parent;
-
-  this(string n = null, Model p = null){
-    this.name = new Token(n.to!(char[]), Type.Ident);
-    this.parent = p;
+  uint scopedepth;
+  Func parent;
+  Model type;
+  Param[] params;
+  this(Model type, Token name, uint sd){
+    this.type = type;
+    this.name = name;
+    this.scopedepth = sd;
+    this.parent = null;
   }
+
   override string toString(){
     return this.name.toString();
   }
-
   string serialize(){
-    char[] c = ""~this.name.toString().to!(char[]);
+    char[] c = this.name.toString().to!(char[]);
     if(this.parent){
       c ~= ": "~this.parent.toString();
     }
-    c~="\n{\n";
-    foreach(name, e; elements){
-      c ~= "\t"~e.type.toString()~" "~e.name.toString()~"\n";
+    c~=" ( ";
+    foreach(e; params){
+      c ~= e.type.toString()~" "~e.name.toString();
     }
-    c~="}";
+    c~=" )";
     return c.to!string;
   }
 }
 
-struct ModelElement{
+class Param{
   Token name;
   Model type;
+
+  this(Model type, Token name){
+    this.type = type;
+    this.name = name;
+  }
 }
