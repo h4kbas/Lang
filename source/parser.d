@@ -31,9 +31,9 @@ class Parser{
   void parse(){
     while(this.next.type != Type.EOF){
       if(this.scopedepth > 0)
-        Expression();
+        Statement();
       else
-        GExpression();
+        GStatement();
     }
   }
 
@@ -161,7 +161,7 @@ class Parser{
     }
   }
 
-  void GExpression(){
+  void GStatement(){
     if(this.currentIf(Keywords.Log))
       Log();
     else if(this.currentIf(Keywords.SComment))
@@ -175,9 +175,16 @@ class Parser{
       Definition();
   }
 
-  void Expression(){
+  void Statement(){
+    this.current.writeln;
     if(this.currentIf(Keywords.If))
       If();
+    else if(this.currentIf(Keywords.Log))
+      Log();
+    else if(this.currentIf(Keywords.SComment))
+      Comment();
+    else if(this.currentIf(Keywords.L_MComment))
+      MComment();
   }
 
   ModelElement[string] ModelElements(bool modify = false){
@@ -254,14 +261,10 @@ class Parser{
   void Scope(uint depth){
     if(!this.nextIf(Keywords.L_Brace)) 
       throw new Exception(Errors.LeftBraceExpected);
-    this.next();
-    this.scopedepth++;        
-    do{
-      if(this.currentIf(Keywords.R_Brace))
-        break;
-      Expression();
+    this.scopedepth++;    
+    while(!this.nextIf(Keywords.R_Brace) && this.scopedepth != depth){
+      Statement();
     }
-    while(!this.nextIf(Keywords.R_Brace) && this.scopedepth != depth + 1);
     if(!this.currentIf(Keywords.R_Brace)) 
       throw new Exception(Errors.RightBraceExpected);
     this.scopedepth--;

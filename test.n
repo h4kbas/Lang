@@ -22,10 +22,21 @@ yapıyorum
 int deneme(int a){
   if(){
     if(){
+      log Person
+      /*
+      Merhaba dünya
+      */
+
+    }
+    if(){
       if(){
-        
+        //deneme
+        log Person
       }
     }
+  }
+  if(){
+
   }
 }
 
