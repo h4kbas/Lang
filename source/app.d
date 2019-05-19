@@ -13,4 +13,6 @@ void main() {
     writeln(v.elements);
   }
   */
+
+  writeln(p.assembly.Code);
 }

@@ -13,6 +13,7 @@ import std.math : abs;
 import std.array : join;
 import errors;
 import lexer;
+import assembly;
 
 import model;
 import func;
@@ -21,6 +22,7 @@ class Parser {
   int mark = -1;
 
   Lexer lexer;
+  Assembly assembly;
   Model[string] models;
   Func[string] functions;
   uint scopedepth = 0;
@@ -32,6 +34,7 @@ class Parser {
       "bool": new Model("bool")
     ];
     lexer = Lexer();
+    assembly = new Assembly();
     lexer.lex(readText(file));
   }
 
@@ -315,8 +318,7 @@ class Parser {
     else if (this.currentIf(Keywords.SemiColon)) {
       Operands = (Operands ~ Operators.reverse()).reverse();
       Operators = [];
-      writeln(Operands, Operators);
-      calcIt();
+      CalcIt();
     }
     else if (!isOperator(this.current)) {
       this.Operands ~= this.current;
@@ -352,7 +354,7 @@ class Parser {
       return 0;
   }
 
-  void calcIt() {
+  void CalcIt() {
     bool first = true;
     while (Operands.length > 0) {
       if (!isOperator(Operands[$ - 1])) {
@@ -361,12 +363,27 @@ class Parser {
       }
       else {
         if (first) {
-          writeln("PUSH ", Operators[$ - 1]);
+          assembly.Push(Operators[$ - 1]);
           Operators.popBack();
         }
-        writeln("PUSH ", Operators[$ - 1]);
+        assembly.Push(Operators[$ - 1]);
         Operators.popBack();
-        writeln("CALC ", Operands[$ - 1]);
+
+        final switch (Operands[$ - 1].text) {
+        case Keywords.Plus:
+          assembly.Add();
+          break;
+        case Keywords.Minus:
+          assembly.Sub();
+          break;
+
+        case Keywords.Times:
+          assembly.Mul();
+          break;
+        case Keywords.Divide:
+          assembly.Div();
+          break;
+        }
         Operands.popBack();
         first = false;
       }
