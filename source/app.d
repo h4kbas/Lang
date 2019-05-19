@@ -13,6 +13,10 @@ void main() {
     writeln(v.elements);
   }
   */
-
-  writeln(p.assembly.Code);
+  foreach (m; p.models) {
+    writeln(m);
+    foreach (e; m.elements) {
+      writeln("->", e);
+    }
+  }
 }

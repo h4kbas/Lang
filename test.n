@@ -13,6 +13,11 @@ modify Person{
   string Occupation
 }
 
+Woman: Person{
+  string MaidenName
+  delete Gender
+}
+
 /*Çok satır
 deneme
 yapıyorum

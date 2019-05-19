@@ -161,12 +161,28 @@ class Parser {
       if (this.nextIf(Keywords.Colon)) {
         if (this.next.toString() in models) {
           m.parent = models[this.current.toString()];
+          m.elements = m.parent.elements.dup;
           this.next();
         }
         else
           throw new Error(Errors.ParentModelNotDefined);
       }
-      m.elements = ModelElements();
+      auto elements = ModelElements(true);
+      foreach (name, e; elements) {
+        if (e.type !is null) {
+          if (name !in m.elements) {
+            m.elements[name] = e;
+          }
+          else
+            throw new Error(Errors.CantChangeAlreadyDefinedElement);
+        }
+        else {
+          if (name in m.elements)
+            m.elements.remove(name);
+          else
+            throw new Error(Errors.CantDeleteUndefinedElement);
+        }
+      }
       models[m.name.toString()] = m;
     }
   }
