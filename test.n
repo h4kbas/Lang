@@ -21,8 +21,9 @@ yapıyorum
 
 int deneme(int a){
   if(){
+    2 + (3 * (8 - 4));
     if(){
-      log Person
+      //log Person
       /*
       Merhaba dünya
       */
@@ -31,7 +32,7 @@ int deneme(int a){
     if(){
       if(){
         //deneme
-        log Person
+        //log Person
       }
     }
   }
@@ -39,5 +40,3 @@ int deneme(int a){
 
   }
 }
-
-log deneme

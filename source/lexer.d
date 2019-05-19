@@ -2,59 +2,108 @@ module lexer;
 
 import std.stdio;
 import std.uni;
-import std.conv:to;
-import std.algorithm: canFind;
+import std.conv : to;
+import std.algorithm : canFind;
 
-enum Type { None = -2, EOL = -1, EOF = 0, SOF = 0, Ident, Str, Int, Sym};
+enum Type
+{
+  None = -2,
+  EOL = -1,
+  EOF = 0,
+  SOF = 0,
+  Ident,
+  Str,
+  Int,
+  Sym
+};
 
-enum Keywords {
-  Log = "log", SComment = "//", L_MComment = "/*", R_MComment = "*/", Modify = "modify",
-  L_Brace = "{", R_Brace = "}", L_Paren = "(", R_Paren = ")", Colon = ":", Delete = "delete", If = "if" 
+enum Keywords
+{
+  Log = "log",
+  SComment = "//",
+  L_MComment = "/*",
+  R_MComment = "*/",
+  Modify = "modify",
+  Comma = ",",
+  L_Brace = "{",
+  R_Brace = "}",
+  L_Paren = "(",
+  R_Paren = ")",
+  Colon = ":",
+  Delete = "delete",
+  If = "if",
+
+  Times = "*",
+  Plus = "+",
+  PPlus = "++",
+  Minus = "-",
+  MMinus = "--",
+  Assign = "=",
+  Divide = "/",
+  And = "&",
+  Or = "|",
+  Xor = "^",
+  Not = "!",
+  SemiColon = ";"
 }
-class Token {
+
+class Token
+{
   char[] text;
   Type type;
-  this(Type t){
-    this.type = t;  
+  this(Type t)
+  {
+    this.type = t;
   }
-  this(char[] str = [], Type t = Type.None){
+
+  this(char[] str = [], Type t = Type.None)
+  {
     this.text = str;
-    this.type = t;  
+    this.type = t;
   }
-  bool opEquals()(auto ref Token other) {
+
+  bool opEquals()(auto ref Token other)
+  {
     return (this.text == other.text && this.type == other.type);
   }
 
-  bool opEquals()(auto ref string other) {
+  bool opEquals()(auto ref string other)
+  {
     return this.text == other;
   }
 
-   bool opEquals()(auto ref Type other) {
+  bool opEquals()(auto ref Type other)
+  {
     return this.type == other;
   }
 
-  override string toString(){
+  override string toString()
+  {
     return this.text.to!string;
   }
 }
 
-struct Lexer {
-  char [] x;
+struct Lexer
+{
+  char[] x;
   uint mark = 0;
   Token[] tokens;
 
-  void lex(string x){
+  void lex(string x)
+  {
     this.x ~= x;
-    while(mark < x.length){
-      if(isNumber(x[mark]))
+    while (mark < x.length)
+    {
+      if (isNumber(x[mark]))
         tokens ~= Int();
-      else if(x[mark] == '"')
+      else if (x[mark] == '"')
         tokens ~= Str();
-      else if(isAlpha(x[mark]))
-       tokens ~= Ident();
-      else if( isPunctuation(x[mark]))
+      else if (isAlpha(x[mark]))
+        tokens ~= Ident();
+      else if (isPunctuation(x[mark]))
         tokens ~= Sym();
-      else if(x[mark] == '\n'){
+      else if (x[mark] == '\n')
+      {
         tokens ~= new Token(Type.EOL);
         mark++;
       }
@@ -63,21 +112,25 @@ struct Lexer {
     }
   }
 
-  Token Int(){
+  Token Int()
+  {
     Token t = new Token();
     t.type = Type.Int;
-    while(mark < x.length && isNumber(x[mark])){
+    while (mark < x.length && isNumber(x[mark]))
+    {
       t.text ~= x[mark];
       mark++;
     }
     return t;
   }
 
-   Token Str(){
+  Token Str()
+  {
     Token t = new Token();
     t.type = Type.Str;
     mark++;
-    while(mark < x.length && x[mark] != '"'){
+    while (mark < x.length && x[mark] != '"')
+    {
       t.text ~= x[mark];
       mark++;
     }
@@ -85,23 +138,28 @@ struct Lexer {
     return t;
   }
 
-  Token Ident(){
+  Token Ident()
+  {
     Token t = new Token();
     t.type = Type.Ident;
-    while(mark < x.length && isAlphaNum(x[mark])){
+    while (mark < x.length && isAlphaNum(x[mark]))
+    {
       t.text ~= x[mark];
       mark++;
     }
     return t;
   }
 
-  Token Sym(){
+  Token Sym()
+  {
     Token t = new Token();
     t.type = Type.Sym;
-    while(mark < x.length && isPunctuation(x[mark])){
+    while (mark < x.length && isPunctuation(x[mark]))
+    {
       t.text ~= x[mark];
       mark++;
-      if(!["+", "-", "/", "*", "="].canFind(t.text)) break;
+      if (!["+", "-", "/", "*", "="].canFind(t.text))
+        break;
     }
     return t;
   }
