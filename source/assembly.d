@@ -1,5 +1,6 @@
 module assembly;
 
+import std.stdio;
 import lexer;
 
 enum ByteCode {
@@ -38,6 +39,7 @@ class Assembly {
   }
 
   void InsertCode(ByteCode code, Token[] ts = []) {
+    writeln(code, ts);
     Line l = [code : ts];
     Code ~= l;
   }

@@ -10,7 +10,8 @@ import std.algorithm.sorting : sort;
 import std.range.primitives : popBack;
 import std.algorithm.mutation : reverse;
 import std.math : abs;
-import std.array : join;
+import std.array : join, split;
+import std.string : fromStringz;
 import errors;
 import lexer;
 import assembly;
@@ -28,11 +29,12 @@ class Parser {
   uint scopedepth = 0;
 
   this(string file) {
-    models = [
-      "int": new Model("int"),
-      "string": new Model("string"),
-      "bool": new Model("bool")
-    ];
+    Model _string = new Model("string");
+    Model _int = new Model("int");
+
+    _string.elements["length"] = ModelElement(new Token("length".dup), _int);
+    models = ["int": _int, "bool": new Model("bool"), "string": _string];
+
     lexer = Lexer();
     assembly = new Assembly();
     lexer.lex(readText(file));
