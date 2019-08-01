@@ -1,3 +1,5 @@
+module util.errors;
+
 enum Errors{
   CantModifyUndefinedModel = "Error cannot modify undefined model",
   CantChangeAlreadyDefinedElement = "Error cannot change already defined element",

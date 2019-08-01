@@ -1,7 +1,9 @@
-module func;
+module structures.func;
 
-import lexer: Token, Type;
-import model: Model;
+import util.type;
+import util.token;
+
+import structures.model: Model;
 import std.conv: to;
 
 class Func{

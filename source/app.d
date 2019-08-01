@@ -1,25 +1,7 @@
 import std.stdio;
-import std.algorithm.iteration;
 import parser;
-import std.conv : to;
-
-
 void main() {
-  Parser p = new Parser("test.n");
-  //writeln(p.lexer.tokens);
+  auto p = newParser("test.n");
   p.parse();
-  /*
-  foreach(k,v; p.models){
-    writeln(v.name, " ", v.parent);
-    writeln(v.elements);
-  }
-  */
-  /*
-  foreach (m; p.models) {
-    writeln(m);
-    foreach (e; m.elements) {
-      writeln("->", e);
-    }
-  }
-  */
 }
+

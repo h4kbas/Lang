@@ -1,6 +1,8 @@
-module model;
+module structures.model;
 
-import lexer: Token, Type;
+import util.type;
+import util.token;
+
 import std.conv: to;
 class Model {
   Token name;

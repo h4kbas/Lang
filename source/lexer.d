@@ -5,83 +5,9 @@ import std.uni;
 import std.conv : to;
 import std.algorithm : canFind;
 
-enum Type
-{
-  None = -2,
-  EOL = -1,
-  EOF = 0,
-  SOF = 0,
-  Ident,
-  Str,
-  Int,
-  Sym
-};
-
-enum Keywords
-{
-  Log = "log",
-  SComment = "//",
-  L_MComment = "/*",
-  R_MComment = "*/",
-  Modify = "modify",
-  Comma = ",",
-  L_Brace = "{",
-  R_Brace = "}",
-  L_Paren = "(",
-  R_Paren = ")",
-  Colon = ":",
-  Delete = "delete",
-  If = "if",
-
-  Times = "*",
-  Plus = "+",
-  PPlus = "++",
-  Minus = "-",
-  MMinus = "--",
-  Assign = "=",
-  Divide = "/",
-  And = "&",
-  Or = "|",
-  Xor = "^",
-  Not = "!",
-  SemiColon = ";"
-}
-
-class Token
-{
-  char[] text;
-  Type type;
-  this(Type t)
-  {
-    this.type = t;
-  }
-
-  this(char[] str = [], Type t = Type.None)
-  {
-    this.text = str;
-    this.type = t;
-  }
-
-  bool opEquals()(auto ref Token other)
-  {
-    return (this.text == other.text && this.type == other.type);
-  }
-
-  bool opEquals()(auto ref string other)
-  {
-    return this.text == other;
-  }
-
-  bool opEquals()(auto ref Type other)
-  {
-    return this.type == other;
-  }
-
-  override string toString()
-  {
-    return this.text.to!string;
-  }
-}
+import util.token;
+import util.keywords;
+import util.type;
 
 struct Lexer
 {

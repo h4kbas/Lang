@@ -1,7 +1,7 @@
 module assembly;
 
 import std.stdio;
-import lexer;
+import util.token;
 
 enum ByteCode {
   Push,
