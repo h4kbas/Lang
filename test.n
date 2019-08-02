@@ -35,13 +35,13 @@ int deneme(int a){
 
     }
     if(){
-      if(){
+      for(){
         //deneme
         //log Person
       }
     }
   }
-  if(){
+  while(){
 
   }
 }
