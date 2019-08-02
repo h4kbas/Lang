@@ -36,17 +36,18 @@ class Parser {
   uint scopedepth = 0;
 
 
-  this(string file, Assembly assembly) {
-    storage = new Storage();
-
+  this(string file, Assembly assembly, Storage storage) {
+    this.storage = storage;
+    this.assembly = assembly;
+    
     Model _string = new Model("string");
     Model _int = new Model("int");
 
     _string.elements["length"] = ModelElement(new Token("length".dup), _int);
-    storage.models = ["int": _int, "bool": new Model("bool"), "string": _string];
+    this.storage.models = ["int": _int, "bool": new Model("bool"), "string": _string];
 
     lexer = Lexer();
-    this.assembly = assembly;
+    
     lexer.lex(readText(file));
   }
 
@@ -117,26 +118,4 @@ class Parser {
   bool currentIf(string t) {
     return t == this.current.text;
   }
-
-  Model getModel(Token s, bool bypass = true) {
-    if (s.toString() in storage.models) {
-      return storage.models[s.toString()];
-    }
-    if (bypass)
-      throw new Exception(Errors.ModelNotDefined ~ s.toString());
-    else
-      return null;
-  }
-
-  Func getFunc(Token s, bool bypass = true) {
-    if (s.toString() in storage.functions) {
-      return storage.functions[s.toString()];
-    }
-    if (bypass)
-      throw new Exception(Errors.FuncNotDefined ~ s.toString());
-    else
-      return null;
-  }
-
-
 }

@@ -19,7 +19,7 @@ class Token
     this.type = t;
   }
 
-  bool opEquals()(auto ref Token other)
+  constbool opEquals()(auto ref Token other)
   {
     return (this.text == other.text && this.type == other.type);
   }

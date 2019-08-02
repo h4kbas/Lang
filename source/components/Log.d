@@ -11,10 +11,10 @@ import parser;
 void Log(Parser parser) {
     if (parser.nextIf(Type.Str))
       writeln(parser.current);
-    else if (parser.getModel(parser.current, false)) {
-      writeln(parser.getModel(parser.current).serialize());
+    else if (parser.storage.getModel(parser.current, false)) {
+      writeln(parser.storage.getModel(parser.current).serialize());
     }
-    else if (parser.getFunc(parser.current, false)) {
-      writeln(parser.getFunc(parser.current).serialize());
+    else if (parser.storage.getFunc(parser.current, false)) {
+      writeln(parser.storage.getFunc(parser.current).serialize());
     }
 }
