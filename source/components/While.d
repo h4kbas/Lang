@@ -8,11 +8,11 @@ import parser;
 
 import components.Scope;
 
-  void While(Parser parser) {
-    if (!parser.nextIf(Keywords.L_Paren))
-      throw new Exception(Errors.LeftParenExcpected);
+void While(Parser parser) {
+  if (!parser.nextIf(Keywords.L_Paren))
+    throw new Exception(Errors.LeftParenExcpected);
 
-    while (!parser.nextIf(Keywords.R_Paren)) {
-    }
-    Scope(parser, parser.scopedepth);
+  while (!parser.nextIf(Keywords.R_Paren)) {
   }
+  Scope(parser, parser.scopedepth);
+}

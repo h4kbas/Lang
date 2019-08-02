@@ -25,6 +25,7 @@ yapıyorum
 
 
 int deneme(int a){
+  int a;
   if(){
     2 + (3 * (8 - 4));
     if(){

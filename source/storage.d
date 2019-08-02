@@ -10,7 +10,6 @@ import util.errors;
 class Storage{
   Model[string] models;
   Func[string] functions;
-  Variable[string] variables;
 
   Model getModel(Token s, bool bypass = true) {
     if (s.toString() in this.models) {

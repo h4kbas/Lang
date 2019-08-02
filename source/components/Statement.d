@@ -10,6 +10,7 @@ import components.Log;
 import components.Comment;
 import components.MComment;
 import components.Exp;
+import components.Var;
 
 import parser;
 
@@ -26,6 +27,8 @@ void Statement(Parser parser) {
     Comment(parser);
   else if (parser.currentIf(Keywords.L_MComment))
     MComment(parser);
+  else if (parser.storage.getModel(parser.current, false))
+    Var(parser);
   else
     Exp(parser);
 }
