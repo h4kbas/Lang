@@ -4,18 +4,20 @@ import util.keywords;
 
 import structures.model: Model;
 import util.errors;
-import util.component;
 
-class Definition: Component {
-  
-  override void parse() {
+
+import components.ModelElements;
+
+import parser;
+
+void Definition(Parser parser) {
     //Extend
     if (parser.currentIf(Keywords.Modify)) {
       if (parser.next.toString() !in parser.storage.models)
         throw new Error(Errors.CantModifyUndefinedModel);
       Model m = parser.storage.models[parser.current.toString()];
       parser.next();
-      auto elements = parser.ModelElements(true);
+      auto elements = ModelElements(parser, true);
       foreach (name, e; elements) {
         if (e.type !is null) {
           if (name !in m.elements) {
@@ -48,7 +50,7 @@ class Definition: Component {
         else
           throw new Error(Errors.ParentModelNotDefined);
       }
-      auto elements = parser.ModelElements(true);
+      auto elements = ModelElements(parser, true);
       foreach (name, e; elements) {
         if (e.type !is null) {
           if (name !in m.elements) {
@@ -67,5 +69,3 @@ class Definition: Component {
       parser.storage.models[m.name.toString()] = m;
     }
   }
-
-}

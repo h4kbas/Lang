@@ -1,22 +1,24 @@
 module components.Function;
 
 
-import util.component;
+
 import util.keywords;
 import util.errors;
 
 import structures.func;
 
-class Function: Component {
-   
-   override void parse() {
+import parser;
+
+import components.Scope;
+
+void Function(Parser parser) {
     Func f = new Func(parser.getModel(parser.current()), parser.next(), parser.scopedepth);
-    f.params = Params();
+    f.params = Params(parser);
     parser.storage.functions[f.name.toString()] = f;
-    component("Scope").parse(f.scopedepth);
+    Scope(parser, f.scopedepth);
   }
 
-   Param[] Params() {
+   Param[] Params(Parser parser) {
     Param[] params;
     bool first = true;
     if (!parser.nextIf(Keywords.L_Paren))
@@ -34,5 +36,3 @@ class Function: Component {
     return params;
   }
 
-
-}

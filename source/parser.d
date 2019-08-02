@@ -16,7 +16,7 @@ import assembly;
 import storage;
 
 import util.errors;
-import util.component;
+
 import util.token;
 import util.type;
 import util.keywords;
@@ -24,17 +24,19 @@ import util.keywords;
 import structures.model;
 import structures.func;
 
+import components.Statement;
+import components.GStatement;
+
 class Parser {
   int mark = -1;
 
   Lexer lexer;
   Assembly assembly;
   Storage storage;
-  Component[string] components;
   uint scopedepth = 0;
 
 
-  this(string file) {
+  this(string file, Assembly assembly) {
     storage = new Storage();
 
     Model _string = new Model("string");
@@ -44,29 +46,16 @@ class Parser {
     storage.models = ["int": _int, "bool": new Model("bool"), "string": _string];
 
     lexer = Lexer();
-    assembly = new Assembly();
+    this.assembly = assembly;
     lexer.lex(readText(file));
-  }
-
-  void register(string name, Component component){
-    if(name !in this.components){
-      component.parser = this;
-      this.components[name] = component;
-    }
-  }
-
-  Component component(string name){
-    if(name !in this.components)
-      throw new Exception("Parser Error: "~name~" is not registered");
-    return this.components[name];
   }
 
   void parse() {
     while (this.next.type != Type.EOF) {
       if (this.scopedepth > 0)
-        component("Statement").parse();
+        Statement(this);
       else
-        component("GStatement").parse();
+        GStatement(this);
     }
   }
 
@@ -149,59 +138,5 @@ class Parser {
       return null;
   }
 
-  ModelElement[string] ModelElements(bool modify = false) {
-    ModelElement[string] melements;
-    if (this.currentIf(Keywords.L_Brace)) {
-      while (!this.nextIf(Keywords.R_Brace)) {
-        ModelElement e = ModelElement();
-        if (this.current.toString() !in storage.models) {
-          if (modify) {
-            if (this.currentIf(Keywords.Delete))
-              e.type = null;
-          }
-          else
-            throw new Error(Errors.TypeNotDefined ~ this.current.toString());
-        }
-        else {
-          e.type = this.getModel(this.current);
-        }
-        e.name = this.next;
-        melements[e.name.toString()] = e;
-        if (this.currentIf(Type.EOF))
-          throw new Error(Errors.RightBraceExpected);
-      }
-      return melements;
-    }
-    else
-      throw new Error(Errors.LeftBraceExpected);
-  }
 
-}
-
-
-import components.Definition;
-import components.If;
-import components.Scope;
-import components.Log;
-import components.GStatement;
-import components.Comment;
-import components.MComment;
-import components.Function;
-import components.Statement;
-import components.Exp;
-
-
-Parser newParser(string filename){
-  Parser p = new Parser(filename);
-  p.register("Definition", new Definition());
-  p.register("If", new If());
-  p.register("Scope", new Scope());
-  p.register("Log", new Log());
-  p.register("GStatement", new GStatement());
-  p.register("Comment", new Comment());
-  p.register("MComment", new MComment());
-  p.register("Function", new Function());
-  p.register("Statement", new Statement());
-  p.register("Exp", new Exp());
-  return p;
 }

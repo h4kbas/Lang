@@ -1,15 +1,12 @@
 module components.Comment;
 
-import util.component;
 
 import util.type;
 
-class Comment: Component {
-   
-   override void parse() {
+import parser;
+
+void Comment(Parser parser) {
     while (!parser.currentIf(Type.EOL)) {
       parser.next(true);
     }
-  }
-
 }

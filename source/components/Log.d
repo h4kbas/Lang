@@ -2,13 +2,13 @@ module components.Log;
 
 import std.stdio: writeln;
 
-import util.component;
+
 import parser: Parser;
 import util.type;
 
-class Log: Component{
+import parser;
 
-  override void parse() {
+void Log(Parser parser) {
     if (parser.nextIf(Type.Str))
       writeln(parser.current);
     else if (parser.getModel(parser.current, false)) {
@@ -17,5 +17,4 @@ class Log: Component{
     else if (parser.getFunc(parser.current, false)) {
       writeln(parser.getFunc(parser.current).serialize());
     }
-  }
 }

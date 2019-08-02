@@ -15,6 +15,8 @@ enum Keywords
   Colon = ":",
   Delete = "delete",
   If = "if",
+  While = "while",
+  For = "for",
 
   Times = "*",
   Plus = "+",

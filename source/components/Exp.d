@@ -4,17 +4,17 @@ import std.range.primitives : popBack;
 import std.algorithm.mutation : reverse;
 import std.algorithm.searching;
 
-import util.component;
+
 import util.token;
 import util.keywords;
 
+import parser;
 
-class Exp: Component {
    
   Token[] Operands;
   Token[] Operators;
  
-  override void parse() {
+  void Exp(Parser parser) {
     if (isOperator(parser.current)) {
       while (Operators.length && precedence(parser.current) <= precedence(Operators[$ - 1])) {
         Operands ~= Operators[$ - 1];
@@ -35,7 +35,7 @@ class Exp: Component {
     else if (parser.currentIf(Keywords.SemiColon)) {
       Operands = (Operands ~ Operators.reverse()).reverse();
       Operators = [];
-      CalcIt();
+      CalcIt(parser);
     }
     else if (!isOperator(parser.current)) {
       Operands ~= parser.current;
@@ -71,7 +71,7 @@ class Exp: Component {
     ].canFind(x.text);
   }
 
-   void CalcIt() {
+   void CalcIt(Parser parser) {
     bool first = true;
     while (Operands.length > 0) {
       if (!isOperator(Operands[$ - 1])) {
@@ -86,7 +86,7 @@ class Exp: Component {
         parser.assembly.Push(Operators[$ - 1]);
         Operators.popBack();
 
-        final switch (Operands[$ - 1].text) {
+        final switch(Operands[$ - 1].text) {
         case Keywords.Plus:
           parser.assembly.Add();
           break;
@@ -106,6 +106,3 @@ class Exp: Component {
       }
     }
   }
-
-
-}

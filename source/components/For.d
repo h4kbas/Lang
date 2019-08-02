@@ -1,4 +1,4 @@
-module components.If;
+module components.For;
 
 
 import util.errors;
@@ -8,7 +8,7 @@ import parser;
 
 import components.Scope;
 
-  void If(Parser parser) {
+  void For(Parser parser) {
     if (!parser.nextIf(Keywords.L_Paren))
       throw new Exception(Errors.LeftParenExcpected);
 

@@ -1,21 +1,31 @@
 module components.Statement;
 
-import util.component;
+
 import util.keywords;
 
-class Statement: Component {
-   
-   override void parse() {
-    if (parser.currentIf(Keywords.If))
-      component("If").parse();
-    else if (parser.currentIf(Keywords.Log))
-      component("Log").parse();
-    else if (parser.currentIf(Keywords.SComment))
-      component("Comment").parse();
-    else if (parser.currentIf(Keywords.L_MComment))
-      component("MComment").parse();
-    else
-      component("Exp").parse();
-  }
+import components.If;
+import components.While;
+import components.For;
+import components.Log;
+import components.Comment;
+import components.MComment;
+import components.Exp;
 
+import parser;
+
+void Statement(Parser parser) {
+  if (parser.currentIf(Keywords.If))
+    If(parser);
+  else if (parser.currentIf(Keywords.While))
+    While(parser);
+  else if (parser.currentIf(Keywords.For))
+    For(parser);
+  else if (parser.currentIf(Keywords.Log))
+    Log(parser);
+  else if (parser.currentIf(Keywords.SComment))
+    Comment(parser);
+  else if (parser.currentIf(Keywords.L_MComment))
+    MComment(parser);
+  else
+    Exp(parser);
 }
