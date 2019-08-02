@@ -24,7 +24,7 @@ ModelElement[string] ModelElements(Parser parser, bool modify = false) {
           throw new Error(Errors.TypeNotDefined ~ parser.current.toString());
       }
       else {
-        e.type = parser.getModel(parser.current);
+        e.type = parser.storage.getModel(parser.current);
       }
       e.name = parser.next;
       melements[e.name.toString()] = e;

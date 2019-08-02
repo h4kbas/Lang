@@ -12,7 +12,7 @@ import parser;
 import components.Scope;
 
 void Function(Parser parser) {
-    Func f = new Func(parser.getModel(parser.current()), parser.next(), parser.scopedepth);
+    Func f = new Func(parser.storage.getModel(parser.current()), parser.next(), parser.scopedepth);
     f.params = Params(parser);
     parser.storage.functions[f.name.toString()] = f;
     Scope(parser, f.scopedepth);
@@ -28,7 +28,7 @@ void Function(Parser parser) {
         throw new Exception(Errors.EitherCommaOrRParen);
       else if (parser.current == Keywords.Comma)
         parser.next();
-      Param p = new Param(parser.getModel(parser.current()), parser.next());
+      Param p = new Param(parser.storage.getModel(parser.current()), parser.next());
       params ~= p;
       if (first)
         first = false;
