@@ -32,10 +32,10 @@ class Assembly {
   uint blockid = 1;
 
   this(){
-    this.NewBlock(blockid);
+    this.NewBlock();
   }
   
-  void NewBlock(uint blockid) {
+  void NewBlock() {
     currentBlock = new Block(blockid++);
     blocks~=currentBlock;
   }

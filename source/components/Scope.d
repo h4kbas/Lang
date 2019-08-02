@@ -9,6 +9,7 @@ import components.Statement;
 import parser;
 
 void Scope(Parser parser, uint depth) {
+  parser.assembly.NewBlock();
   if (!parser.nextIf(Keywords.L_Brace))
     throw new Exception(Errors.LeftBraceExpected);
   parser.scopedepth++;
