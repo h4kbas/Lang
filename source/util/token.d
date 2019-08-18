@@ -3,16 +3,32 @@ module util.token;
 import util.type;
 
 import std.conv: to;
+import std.string: isNumeric;
 
 class Token
 {
   char[] text;
+  double value;
   Type type;
   this(Type t)
   {
     this.type = t;
   }
 
+  this(char[] t)
+  {
+    this.text = t;
+  }
+  this(double v)
+  {
+    this.value = v;
+    this.text = this.value.to!(char[]);
+  }
+  this(bool v)
+  {
+    this.value = v ? 1 : 0;
+    this.text = this.value.to!(char[]);
+  }
   this(char[] str = [], Type t = Type.None)
   {
     this.text = str;

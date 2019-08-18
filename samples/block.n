@@ -1,0 +1,12 @@
+int a(){
+  int var1;
+  if(){
+    int var2;
+  }
+  if(){
+    int var3;
+    while(){
+      int var4;
+    }
+  }
+}

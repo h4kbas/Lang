@@ -84,7 +84,7 @@ struct Lexer
     {
       t.text ~= x[mark];
       mark++;
-      if (!["+", "-", "/", "*", "="].canFind(t.text))
+      if (!["+", "-", "/", "*", "|", "&", "="].canFind(t.text))
         break;
     }
     return t;

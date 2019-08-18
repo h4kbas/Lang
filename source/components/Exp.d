@@ -8,6 +8,9 @@ import std.algorithm.searching;
 import util.token;
 import util.keywords;
 
+import std.traits;
+import std.format;
+
 import parser;
 
    
@@ -44,62 +47,129 @@ import parser;
 
   uint precedence(Token t) {
     if ([Keywords.PPlus, Keywords.MMinus].canFind(t.text))
-      return 8;
+      return 10;
     if ([Keywords.Not].canFind(t.text))
-      return 7;
+      return 9;
     if ([Keywords.Times, Keywords.Divide].canFind(t.text))
-      return 6;
+      return 8;
     else if ([Keywords.Plus, Keywords.Minus].canFind(t.text))
-      return 5;
-    else if ([Keywords.And].canFind(t.text))
-      return 4;
+      return 7;
+    else if ([Keywords.BAnd].canFind(t.text))
+      return 6;
     else if ([Keywords.Xor].canFind(t.text))
+      return 5;
+    else if ([Keywords.BOr].canFind(t.text))
+      return 4;
+    else if ([Keywords.And].canFind(t.text))
       return 3;
     else if ([Keywords.Or].canFind(t.text))
       return 2;
-    else if ([Keywords.Assign].canFind(t.text))
+    else if ([Keywords.Assign, Keywords.AssignTimes, Keywords.AssignDivide, 
+              Keywords.AssignPlus, Keywords.AssignMinus].canFind(t.text))
       return 1;
     else
       return 0;
   }
+  bool isUnary(Token t) {
+    return [Keywords.Not, Keywords.PPlus, Keywords.MMinus].canFind(t.text);
+  }
 
   bool isOperator(Token x) {
     return [
-      Keywords.Times, Keywords.Plus, Keywords.PPlus, Keywords.Minus,
-      Keywords.MMinus, Keywords.Assign, Keywords.Divide, Keywords.And,
-      Keywords.Or, Keywords.Xor, Keywords.Not
+      Keywords.PPlus, Keywords.MMinus,
+      Keywords.Not,
+      Keywords.Times, Keywords.Divide,
+      Keywords.Plus, Keywords.Minus,
+      Keywords.BAnd,
+      Keywords.Xor,
+      Keywords.BOr,
+      Keywords.And,
+      Keywords.Or,
+      Keywords.Assign, Keywords.AssignTimes, Keywords.AssignDivide, 
+        Keywords.AssignPlus, Keywords.AssignMinus
     ].canFind(x.text);
   }
 
-   void CalcIt(Parser parser) {
+  void CalcIt(Parser parser) {
     bool first = true;
+    Token left, right, op;
     while (Operands.length > 0) {
       if (!isOperator(Operands[$ - 1])) {
         Operators ~= Operands[$ - 1];
         Operands.popBack();
       }
       else {
+        op = Operands[$ - 1];
+        import std.stdio: writeln;
         if (first) {
-          parser.assembly.Push(Operators[$ - 1]);
+          if(op != Keywords.Assign)
+            parser.assembly.Push(Operators[$ - 1]);
+          right = Operators[$ - 1];
           Operators.popBack();
         }
-        parser.assembly.Push(Operators[$ - 1]);
-        Operators.popBack();
+        if(!isUnary(op)){
+          if(op != Keywords.Assign)
+            parser.assembly.Push(Operators[$ - 1]);
+          left = Operators[$ - 1];
+          Operators.popBack();
+        }
+        
+        final switch(op.text) {
+          case Keywords.Not:
+            parser.assembly.Not();
+            break;
 
-        final switch(Operands[$ - 1].text) {
-        case Keywords.Plus:
-          parser.assembly.Add();
-          break;
-        case Keywords.Minus:
-          parser.assembly.Sub();
-          break;
+          case Keywords.PPlus:
+            parser.assembly.PPlus();
+            break;
+          case Keywords.MMinus:
+            parser.assembly.MMinus();
+            break;
+          
+          case Keywords.Times:
+            parser.assembly.Times();
+            break;
+          case Keywords.Divide:
+            parser.assembly.Divide();
+            break;
+            
+          case Keywords.Plus:
+            parser.assembly.Plus();
+            break;
+          case Keywords.Minus:
+            parser.assembly.Minus();
+            break;
 
-        case Keywords.Times:
-          parser.assembly.Mul();
-          break;
-        case Keywords.Divide:
-          parser.assembly.Div();
-          break;
+          case Keywords.BAnd:
+            parser.assembly.BAnd();
+            break;
+          case Keywords.Xor:
+            parser.assembly.Xor();
+            break;
+          case Keywords.BOr:
+            parser.assembly.BOr();
+            break;
+          case Keywords.And:
+            parser.assembly.And();
+            break;
+          case Keywords.Or:
+            parser.assembly.Or();
+            break;
+          case Keywords.Assign:
+            parser.assembly.Assign(left);
+            break;
+          case Keywords.AssignTimes:
+            parser.assembly.AssignTimes(left);
+            break;
+          case Keywords.AssignDivide:
+            parser.assembly.AssignDivide(left);
+            break; 
+          case Keywords.AssignPlus:
+            parser.assembly.AssignDivide(left);
+            break; 
+          case Keywords.AssignMinus:
+            parser.assembly.AssignDivide(left);
+            break;
         }
         Operands.popBack();
         first = false;

@@ -1,0 +1,28 @@
+Person{
+  string Name
+  string Surname
+  string Password
+  int Age
+  bool Gender
+}
+
+//Tek satır deneme
+
+modify Person{
+  delete Age
+  string Occupation
+}
+
+Woman: Person{
+  string MaidenName
+  delete Gender
+}
+
+Man: Person{
+  delete Gender
+}
+
+int personify(Person p){
+  Man adam;
+  Woman kadin;
+}

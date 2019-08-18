@@ -3,77 +3,104 @@ module assembly;
 import std.stdio;
 import util.token;
 
-import structures.variable;
+import structures.block;
 
-enum ByteCode {
-  Push,
+import util.bytecode;
 
-  Div,
-  Mul,
 
-  Add,
-  Sub,
-
-}
-
-alias Line = Token[][ByteCode];
-
-class Block{
-  uint id;
-  uint varcount;
-  Line[] Code;
-  
-  Variable[string] variables;
-  
-  this(uint blockid){
-    this.id = blockid;
-  }
-
-  void InsertCode(ByteCode code, Token[] ts = []) {
-    writeln(code, ts);
-    Line l = [code : ts];
-    this.Code ~= l;
-  }
-
-  void addVariable(Variable v){
-    v.blockid = this.id;
-    v.varid = ++this.varcount;
-    this.variables[v.name.toString()] = v;
-  }
-}
 
 class Assembly {
   Block[] blocks;
-  alias Line = Token[][ByteCode];
   Block currentBlock;
   uint blockid = 1;
 
-  this(){
-    this.NewBlock();
-  }
   
-  void NewBlock() {
+  Block NewBlock(uint scopedepth) {
     currentBlock = new Block(blockid++);
+    currentBlock.depth = scopedepth;
     blocks~=currentBlock;
+    return currentBlock;
   }
 
   void Push(Token t) {
     currentBlock.InsertCode(ByteCode.Push, [t]);
   }
 
-  void Mul() {
+  // Math
+  void PPlus() {
+    currentBlock.InsertCode(ByteCode.Inc);
+  }
+
+  void MMinus() {
+    currentBlock.InsertCode(ByteCode.Dec);
+  }
+
+  void Times() {
     currentBlock.InsertCode(ByteCode.Mul);
   }
 
-  void Div() {
+  void Divide() {
     currentBlock.InsertCode(ByteCode.Div);
   }
 
-  void Add() {
+  void Plus() {
     currentBlock.InsertCode(ByteCode.Add);
   }
 
-  void Sub() {
+  void Minus() {
     currentBlock.InsertCode(ByteCode.Sub);
+  }
+
+  // Bitwise
+
+  void BAnd() {
+    currentBlock.InsertCode(ByteCode.And);
+  }
+
+  void BOr() {
+    currentBlock.InsertCode(ByteCode.Or);
+  }
+
+  void Not() {
+    currentBlock.InsertCode(ByteCode.Not);
+  }
+
+  void Xor() {
+    currentBlock.InsertCode(ByteCode.Xor);
+  }
+
+  //Logical
+  void And() {
+    currentBlock.InsertCode(ByteCode.And);
+  }
+
+  void Or() {
+    currentBlock.InsertCode(ByteCode.Or);
+  }
+
+  // Assign
+  void Assign(Token t) {
+    currentBlock.InsertCode(ByteCode.Assign, [t]);
+  }
+  void AssignTimes(Token t) {
+    currentBlock.InsertCode(ByteCode.Mul);
+    currentBlock.InsertCode(ByteCode.Assign, [t]);
+  }
+  void AssignDivide(Token t) {
+    currentBlock.InsertCode(ByteCode.Div);
+    currentBlock.InsertCode(ByteCode.Assign, [t]);
+  }
+  void AssignPlus(Token t) {
+    currentBlock.InsertCode(ByteCode.Add);
+    currentBlock.InsertCode(ByteCode.Assign, [t]);
+  }
+  void AssignMinus(Token t) {
+    currentBlock.InsertCode(ByteCode.Sub);
+    currentBlock.InsertCode(ByteCode.Assign, [t]);
+  }
+
+  //Branch
+  void Br(Token t){
+    currentBlock.InsertCode(ByteCode.Br, [t]);
   }
 }

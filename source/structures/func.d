@@ -6,11 +6,14 @@ import util.token;
 import structures.model: Model;
 import std.conv: to;
 
+import structures.block;
+
 class Func{
   Token name;
   uint scopedepth;
   Func parent;
   Model type;
+  Block block;
   Param[] params;
   this(Model type, Token name, uint sd){
     this.type = type;
@@ -22,6 +25,7 @@ class Func{
   override string toString(){
     return this.name.toString();
   }
+  
   string serialize(){
     char[] c = this.name.toString().to!(char[]);
     if(this.parent){

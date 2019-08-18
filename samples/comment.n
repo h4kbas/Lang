@@ -1,0 +1,21 @@
+
+//Single line comments are boring
+
+
+/* 
+   Multiple 
+   line
+   comments
+   are
+   cool
+*/
+
+
+int deneme(){
+  if(){
+     //log "I am in if"
+    if(){
+      //log "I am in second if"
+    }   
+  }
+}

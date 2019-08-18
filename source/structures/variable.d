@@ -11,8 +11,9 @@ class Variable{
   uint blockid;
   uint varid;
   uint length;
-  uint heap;
-  uint value;
+  
+  //Interpreter
+  double value;
 
   this(Model type, Token name){
     this.name = name;
