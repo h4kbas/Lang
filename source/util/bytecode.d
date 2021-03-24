@@ -2,6 +2,7 @@ module util.bytecode;
 
 enum ByteCode {
   Push = 1,
+  Load,
   Assign,
 
   Inc,

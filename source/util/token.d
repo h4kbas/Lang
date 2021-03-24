@@ -3,7 +3,9 @@ module util.token;
 import util.type;
 
 import std.conv: to;
+
 import std.string: isNumeric;
+import std.math: isNaN;
 
 class Token
 {
@@ -18,16 +20,15 @@ class Token
   this(char[] t)
   {
     this.text = t;
+    this.prepValue();
   }
   this(double v)
   {
     this.value = v;
-    this.text = this.value.to!(char[]);
   }
   this(bool v)
   {
     this.value = v ? 1 : 0;
-    this.text = this.value.to!(char[]);
   }
   this(char[] str = [], Type t = Type.None)
   {
@@ -52,6 +53,11 @@ class Token
 
   override string toString()
   {
-    return this.text.to!string;
+      return this.text.to!string;
+  }
+
+  void prepValue(){
+    if(isNaN(this.value))
+      this.value = isNumeric(this.text) ? this.text.to!double : 0;
   }
 }

@@ -27,12 +27,12 @@ class Assembly {
   }
 
   // Math
-  void PPlus() {
-    currentBlock.InsertCode(ByteCode.Inc);
+  void PPlus(Token t) {
+    currentBlock.InsertCode(ByteCode.Inc, [t]);
   }
 
-  void MMinus() {
-    currentBlock.InsertCode(ByteCode.Dec);
+  void MMinus(Token t) {
+    currentBlock.InsertCode(ByteCode.Dec, [t]);
   }
 
   void Times() {

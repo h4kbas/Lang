@@ -102,7 +102,7 @@ import parser;
         op = Operands[$ - 1];
         import std.stdio: writeln;
         if (first) {
-          if(op != Keywords.Assign)
+          if( (op != Keywords.Assign)||((op == Keywords.Assign ) && (Operands.length == 1)))
             parser.assembly.Push(Operators[$ - 1]);
           right = Operators[$ - 1];
           Operators.popBack();
@@ -120,10 +120,10 @@ import parser;
             break;
 
           case Keywords.PPlus:
-            parser.assembly.PPlus();
+            parser.assembly.PPlus(right);
             break;
           case Keywords.MMinus:
-            parser.assembly.MMinus();
+            parser.assembly.MMinus(right);
             break;
           
           case Keywords.Times:

@@ -14,5 +14,9 @@ enum Errors{
   LeftBraceExpected = "Error left brace { expected",
   LeftParenExcpected = "Error left paren ( expected",
   RightParenExcpected = "Error right paren ) expected",
-  EitherCommaOrRParen = "Error either comma , or right paren ) expected"
+  EitherCommaOrRParen = "Error either comma , or right paren ) expected",
+
+  VariableNotDefined = "The variable is not defined in thi scope",
+
+  BlockNotDefined = "The block requested is not defined"
 }

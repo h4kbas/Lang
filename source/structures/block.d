@@ -31,13 +31,14 @@ class Block{
 
   Variable getVariable(Token v){
     Block p = this;
+
     do{
       if(v.toString() in p.variables)
         return p.variables[v.toString()];
       else
         p = p.parent;
     }
-    while(p.parent);
+    while(p);
     throw new Exception(v.toString()~" variable is not defined");
   }
 }

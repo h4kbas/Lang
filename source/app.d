@@ -9,14 +9,16 @@ import std.traits;
 void main() {
   Assembly assembly = new Assembly();
   Storage storage = new Storage();
-  Parser p = new Parser("samples/block.n", assembly, storage);
+  Parser p = new Parser("samples/math.n", assembly, storage);
   p.parse();
 
-	//Interpreter t = new Interpreter();
-	//t.interpret(p.assembly, 1);
+	Interpreter t = new Interpreter();
+	t.interpret(p.assembly, 1);
+	
 	import util.log: log;
 	foreach(b; assembly.blocks){
-			log(b);
+			writeln(b.variables["a"].value);
 	}
+	
 }
 
